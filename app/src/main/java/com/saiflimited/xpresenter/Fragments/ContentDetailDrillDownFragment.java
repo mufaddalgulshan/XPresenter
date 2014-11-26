@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,8 +33,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.saiflimited.xpresenter.Adapters.ContentDetailDrillDownAdapter;
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
 import com.saiflimited.xpresenter.Models.ContentData.ContentItemList;
+import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.UI.SlidingTabLayout;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -135,13 +139,12 @@ public class ContentDetailDrillDownFragment extends Fragment {
                 // Add the newly created View to the ViewPager
                 container.addView(view);
 
-                byte[] arrayOfByte = Base64.decode(db.getBackground(), 0);
-                ArrayList<ContentItemList> contentItemLists = new ArrayList<ContentItemList>();
+                ArrayList<ContentItemList> contentItemLists;
 
                 String contentDoc = db.getContentDoc(1);
                 ContentDocument contentDocument = new ContentDocument();
                 if (contentDoc != null) {
-                    String decodedContentDoc = null;
+                    String decodedContentDoc;
                     try {
                         decodedContentDoc = new String(Base64.decode(contentDoc, 0), "UTF-8");
                         Gson gson = new Gson();
@@ -168,13 +171,13 @@ public class ContentDetailDrillDownFragment extends Fragment {
                 // Add the newly created View to the ViewPager
                 container.addView(view);
 
-                ArrayList<ContentItemList> contentItemLists = new ArrayList<ContentItemList>();
+                ArrayList<ContentItemList> contentItemLists;
 
                 String contentDoc = db.getContentDoc(1);
                 ContentDocument contentDocument = new ContentDocument();
 
                 if (contentDoc != null) {
-                    String decodedContentDoc = null;
+                    String decodedContentDoc;
                     try {
                         decodedContentDoc = new String(Base64.decode(contentDoc, 0), "UTF-8");
                         Gson gson = new Gson();

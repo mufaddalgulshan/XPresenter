@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,10 +23,13 @@ import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.Publisher.ContentType;
 import com.saiflimited.xpresenter.Models.Publisher.GetPublisherList;
 import com.saiflimited.xpresenter.Models.Publisher.Publisher;
 import com.saiflimited.xpresenter.Models.User;
+import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.Utils.GPSTracker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -57,10 +60,10 @@ public class LoginFragment extends Fragment {
     private static final int FIRST_ACCESS = 1;
     private static final String GET_PUBLISHER_LIST = "http://uatwebservices.ipremios.com/XPresenter/GetPublisherList";
     private static final String GET_USER_LIST = "http://uatwebservices.ipremios.com/XPresenter/GetUserList";
-    private static double LATITUDE = 0.0D;
-    private static double LONGITUDE = 0.0D;
     private static final int NOT_FIRST_ACCESS = 2;
     private static final String TAG = "UserFragment";
+    private static double LATITUDE = 0.0D;
+    private static double LONGITUDE = 0.0D;
     private static String IMEI;
     private Button btnContinue;
     private DatabaseHandler db;
@@ -71,6 +74,129 @@ public class LoginFragment extends Fragment {
     private boolean userExists;
     private EditText txtUsername;
     private UserCallback mUserCallback;
+
+    public static String prepareRequestToGetPublisherList(String url) {
+
+        InputStream inputStream;
+        String result = "";
+        try {
+
+            // 1. create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            // 2. make POST request to the given URL
+            HttpPost httpPost = new HttpPost(url);
+
+            String json;
+
+            // 3. build jsonObject
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.accumulate("IMEI", IMEI);
+            jsonObject.accumulate("LocationLatitude", LATITUDE);
+            jsonObject.accumulate("LocationLongitude", LONGITUDE);
+
+            // 4. convert JSONObject to JSON to String
+            json = jsonObject.toString();
+            Log.i(TAG, "[GetPublisherList] JSON_REQUEST: " + json);
+
+            // 5. set json to StringEntity
+            StringEntity se = new StringEntity(json);
+
+            // 6. set httpPost Entity
+            httpPost.setEntity(se);
+
+            // 7. Set some headers to inform server about the type of the content
+            httpPost.setHeader("Accept", "*/*");
+            httpPost.setHeader("Content-type", "*/*");
+
+            // 8. Execute POST request to the given URL
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+
+            // 9. receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+
+            // 10. convert inputstream to string
+            if (inputStream != null)
+                result = convertInputStreamToString(inputStream);
+            else
+                result = "Did not work!";
+
+        } catch (IOException e) {
+            Log.i("IOException", e.getLocalizedMessage());
+        } catch (Exception e) {
+            Log.i("InputStream", e.getLocalizedMessage());
+        }
+
+        Log.i(TAG, "[GetPublisherList] " + result);
+        // 11. return result
+        return result;
+    }
+
+    public static String prepareRequestToGetUserList(String url) {
+        InputStream inputStream;
+        String result = "";
+        try {
+
+            // 1. create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+
+            // 2. make POST request to the given URL
+            HttpPost httpPost = new HttpPost(url);
+
+            String json;
+
+            // 3. build jsonObject
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.accumulate("IMEI", IMEI);
+            jsonObject.accumulate("LocationLatitude", LATITUDE);
+            jsonObject.accumulate("LocationLongitude", LONGITUDE);
+
+            // 4. convert JSONObject to JSON to String
+            json = jsonObject.toString();
+            Log.i(TAG, "[GetUserList] JSON_REQUEST: " + json);
+
+            // 5. set json to StringEntity
+            StringEntity se = new StringEntity(json);
+
+            // 6. set httpPost Entity
+            httpPost.setEntity(se);
+
+            // 7. Set some headers to inform server about the type of the content
+            httpPost.setHeader("Accept", "*/*");
+            httpPost.setHeader("Content-type", "*/*");
+
+            // 8. Execute POST request to the given URL
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+
+            // 9. receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+
+            // 10. convert inputstream to string
+            if (inputStream != null)
+                result = convertInputStreamToString(inputStream);
+            else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.i("InputStream", e.getLocalizedMessage());
+        }
+
+        Log.i(TAG, "[GetUserList] " + result);
+        // 11. return result
+        return result;
+
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        String result = "";
+        while ((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,8 +225,8 @@ public class LoginFragment extends Fragment {
                 LONGITUDE = GPS.getLongitude();
 
                 if (isConnected()) {
-                    new getPublisherList().execute(new String[]{GET_PUBLISHER_LIST});
-                    new getUserList().execute(new String[]{GET_USER_LIST});
+                    new getPublisherList().execute(GET_PUBLISHER_LIST);
+                    new getUserList().execute(GET_USER_LIST);
                 }
             } else {
                 showGPSSettingsAlert();
@@ -161,6 +287,36 @@ public class LoginFragment extends Fragment {
         return db.isFirstAccess(paramString);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mUserCallback = (UserCallback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement onContinue");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mUserCallback = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!GPS.canGetLocation()) {
+            showGPSSettingsAlert();
+        }
+    }
+
+    public static abstract interface UserCallback {
+        public abstract void onContinue(String username, boolean userExists, int accessS);
+
+    }
+
     private class getPublisherList extends AsyncTask<String, Void, String> {
         private getPublisherList() {
         }
@@ -203,63 +359,6 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    public static String prepareRequestToGetPublisherList(String url) {
-
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            // 1. create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
-
-            // 2. make POST request to the given URL
-            HttpPost httpPost = new HttpPost(url);
-
-            String json = "";
-
-            // 3. build jsonObject
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("IMEI", IMEI);
-            jsonObject.accumulate("LocationLatitude", Double.valueOf(LATITUDE));
-            jsonObject.accumulate("LocationLongitude", Double.valueOf(LONGITUDE));
-
-            // 4. convert JSONObject to JSON to String
-            json = jsonObject.toString();
-            Log.i(TAG, "[GetPublisherList] JSON_REQUEST: " + json);
-
-            // 5. set json to StringEntity
-            StringEntity se = new StringEntity(json);
-
-            // 6. set httpPost Entity
-            httpPost.setEntity(se);
-
-            // 7. Set some headers to inform server about the type of the content
-            httpPost.setHeader("Accept", "*/*");
-            httpPost.setHeader("Content-type", "*/*");
-
-            // 8. Execute POST request to the given URL
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-
-            // 9. receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
-
-            // 10. convert inputstream to string
-            if (inputStream != null)
-                result = convertInputStreamToString(inputStream);
-            else
-                result = "Did not work!";
-
-        } catch (IOException e) {
-            Log.i("IOException", e.getLocalizedMessage());
-        } catch (Exception e) {
-            Log.i("InputStream", e.getLocalizedMessage());
-        }
-
-        Log.i(TAG, "[GetPublisherList] " + result);
-        // 11. return result
-        return result;
-    }
-
     private class getUserList extends AsyncTask<String, Void, String> {
         private getUserList() {
         }
@@ -292,102 +391,6 @@ public class LoginFragment extends Fragment {
             }
 
             progressDialog.dismiss();
-        }
-    }
-
-    public static String prepareRequestToGetUserList(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            // 1. create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
-
-            // 2. make POST request to the given URL
-            HttpPost httpPost = new HttpPost(url);
-
-            String json = "";
-
-            // 3. build jsonObject
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("IMEI", IMEI);
-            jsonObject.accumulate("LocationLatitude", Double.valueOf(LATITUDE));
-            jsonObject.accumulate("LocationLongitude", Double.valueOf(LONGITUDE));
-
-            // 4. convert JSONObject to JSON to String
-            json = jsonObject.toString();
-            Log.i(TAG, "[GetUserList] JSON_REQUEST: " + json);
-
-            // 5. set json to StringEntity
-            StringEntity se = new StringEntity(json);
-
-            // 6. set httpPost Entity
-            httpPost.setEntity(se);
-
-            // 7. Set some headers to inform server about the type of the content
-            httpPost.setHeader("Accept", "*/*");
-            httpPost.setHeader("Content-type", "*/*");
-
-            // 8. Execute POST request to the given URL
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-
-            // 9. receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
-
-            // 10. convert inputstream to string
-            if (inputStream != null)
-                result = convertInputStreamToString(inputStream);
-            else
-                result = "Did not work!";
-
-        } catch (Exception e) {
-            Log.i("InputStream", e.getLocalizedMessage());
-        }
-
-        Log.i(TAG, "[GetUserList] " + result);
-        // 11. return result
-        return result;
-
-    }
-
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while ((line = bufferedReader.readLine()) != null)
-            result += line;
-
-        inputStream.close();
-        return result;
-    }
-
-    public static abstract interface UserCallback {
-        public abstract void onContinue(String username, boolean userExists, int accessS);
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mUserCallback = (UserCallback) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement onContinue");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mUserCallback = null;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!GPS.canGetLocation()) {
-            showGPSSettingsAlert();
         }
     }
 }

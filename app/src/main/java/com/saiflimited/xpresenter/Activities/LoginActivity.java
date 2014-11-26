@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,8 +7,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
+import com.saiflimited.xpresenter.Fragments.LoginFragment;
+import com.saiflimited.xpresenter.Fragments.SyncFragment;
+import com.saiflimited.xpresenter.Fragments.ValidateFragment;
+import com.saiflimited.xpresenter.R;
 
 
 public class LoginActivity extends ActionBarActivity implements
@@ -16,14 +19,11 @@ public class LoginActivity extends ActionBarActivity implements
         ValidateFragment.ValidateCallback,
         SyncFragment.SyncCallback {
 
-    private static final int FIRST_ACCESS = 1;
-    private static final int NOT_FIRST_ACCESS = 2;
     DatabaseHandler db;
     TextView lblMessageBox;
     SyncFragment mSyncFragment;
     LoginFragment mLoginFragment;
     ValidateFragment mValidateFragment;
-    private SimpleDateFormat dtFormatterForDB = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

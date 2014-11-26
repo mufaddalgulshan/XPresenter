@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
+import com.saiflimited.xpresenter.R;
 
 import java.util.Date;
 
@@ -19,23 +21,20 @@ import java.util.Date;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link com.saiflimited.xpresenter.ValidateFragment.ValidateCallback} interface
+ * {@link ValidateFragment.ValidateCallback} interface
  * to handle interaction events.
  */
 public class ValidateFragment extends Fragment {
 
-    private String username;
-    private int access;
     private static final int FIRST_ACCESS = 1;
     private static final int NOT_FIRST_ACCESS = 2;
-    private static final String TAG = "ValidateFragment";
+    private String username;
     private Button btnSendNewPIN;
     private Button btnValidate;
     private DatabaseHandler db;
     private Bundle mBundle;
     private boolean mFirstAccess;
     private String mPIN = "";
-    private Toast mToast = null;
     private EditText txtPIN;
 
     private ValidateCallback mValidateCallback;
@@ -59,56 +58,54 @@ public class ValidateFragment extends Fragment {
                 mFirstAccess = true;
             } else if (mBundle.getInt("ACCESS") == NOT_FIRST_ACCESS)
                 mFirstAccess = false;
-        }
 
 
-        btnValidate = (Button) view.findViewById(R.id.btnValidate);
-        btnSendNewPIN = (Button) view.findViewById(R.id.btnSendNewPIN);
-        txtPIN = ((EditText) view.findViewById(R.id.txtPIN));
-        btnValidate.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent motionEvent) {
-                if (motionEvent.getAction() != 0) {
-                    motionEvent.getAction();
-                }
-                return false;
-            }
-        });
-        btnSendNewPIN.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent motionEvent) {
-                if (motionEvent.getAction() != 0) {
-                    motionEvent.getAction();
-                }
-                return false;
-            }
-        });
-
-        if (mFirstAccess) {
-            sendSMS(String.valueOf(generatePIN(username)));
-            btnSendNewPIN.setVisibility(View.VISIBLE);
-        } else {
-            btnSendNewPIN.setVisibility(View.GONE);
-        }
-
-        btnValidate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View paramAnonymousView) {
-                boolean valid = false;
-                if (validatePIN()) {
-                    if (loginAllowed(username)) {
-                        mValidateCallback.onValidate(username, true);
-                    } else {
-                        mValidateCallback.onLoginRestricted(username);
+            btnValidate = (Button) view.findViewById(R.id.btnValidate);
+            btnSendNewPIN = (Button) view.findViewById(R.id.btnSendNewPIN);
+            txtPIN = ((EditText) view.findViewById(R.id.txtPIN));
+            btnValidate.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() != 0) {
+                        motionEvent.getAction();
                     }
-                } else {
-                    mValidateCallback.onValidate(username, false);
+                    return false;
                 }
-            }
-        });
-        btnSendNewPIN.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View paramAnonymousView) {
-                sendSMS(generatePIN(username));
-            }
-        });
+            });
+            btnSendNewPIN.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() != 0) {
+                        motionEvent.getAction();
+                    }
+                    return false;
+                }
+            });
 
+            if (mFirstAccess) {
+                sendSMS(String.valueOf(generatePIN()));
+                btnSendNewPIN.setVisibility(View.VISIBLE);
+            } else {
+                btnSendNewPIN.setVisibility(View.GONE);
+            }
+
+            btnValidate.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View paramAnonymousView) {
+                    if (validatePIN()) {
+                        if (loginAllowed(username)) {
+                            mValidateCallback.onValidate(username, true);
+                        } else {
+                            mValidateCallback.onLoginRestricted(username);
+                        }
+                    } else {
+                        mValidateCallback.onValidate(username, false);
+                    }
+                }
+            });
+            btnSendNewPIN.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View paramAnonymousView) {
+                    sendSMS(generatePIN());
+                }
+            });
+        }
         return view;
     }
 
@@ -151,7 +148,7 @@ public class ValidateFragment extends Fragment {
         mValidateCallback = null;
     }
 
-    public String generatePIN(String username) {
+    public String generatePIN() {
         mPIN = String.valueOf(1000 + (int) (9000.0D * Math.random()));
         return mPIN;
     }

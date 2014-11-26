@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Fragments;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -36,9 +36,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.saiflimited.xpresenter.Adapters.ContentDrillDownAdapter;
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.ContentData.Content;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDetail;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
+import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.UI.SlidingTabLayout;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -110,6 +114,28 @@ public class ContentDrillDownFragment extends Fragment {
                 });
 
         mSlidingTabLayout.setDividerColors(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            contentDrillDownCallBack = (ContentDrillDownCallBack) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement onContinue");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        contentDrillDownCallBack = null;
+    }
+
+    public static abstract interface ContentDrillDownCallBack {
+        public abstract void onContentDrillDownItemClick(View view, int position, long id);
+
     }
 
     class ContentDrillDownPagerAdapter extends PagerAdapter {
@@ -223,28 +249,6 @@ public class ContentDrillDownFragment extends Fragment {
             Log.i(LOG_TAG, "destroyItem() [position: " + position + "]");
         }
 
-    }
-
-    public static abstract interface ContentDrillDownCallBack {
-        public abstract void onContentDrillDownItemClick(View view, int position, long id);
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            contentDrillDownCallBack = (ContentDrillDownCallBack) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement onContinue");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        contentDrillDownCallBack = null;
     }
 
 }

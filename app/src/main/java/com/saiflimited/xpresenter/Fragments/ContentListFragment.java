@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Fragments;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -18,7 +18,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.saiflimited.xpresenter.Adapters.ContentListAdapter;
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
+import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.UI.SlidingTabLayout;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -90,6 +94,28 @@ public class ContentListFragment extends Fragment {
                 });
 
         mSlidingTabLayout.setDividerColors(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mContentCallBack = (ContentCallBack) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement onContinue");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mContentCallBack = null;
+    }
+
+    public static abstract interface ContentCallBack {
+        public abstract void onContentItemListClick(View view, int position, long id);
+
     }
 
     class ContentListPagerAdapter extends PagerAdapter {
@@ -194,28 +220,6 @@ public class ContentListFragment extends Fragment {
             container.removeView((View) object);
             Log.i(LOG_TAG, "destroyItem() [position: " + position + "]");
         }
-    }
-
-    public static abstract interface ContentCallBack {
-        public abstract void onContentItemListClick(View view, int position, long id);
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mContentCallBack = (ContentCallBack) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement onContinue");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mContentCallBack = null;
     }
 
 }

@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package com.saiflimited.xpresenter;
+package com.saiflimited.xpresenter.Activities;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +30,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.View;
 
+import com.saiflimited.xpresenter.DB.DatabaseHandler;
+import com.saiflimited.xpresenter.Fragments.ContentDetailDrillDownFragment;
+import com.saiflimited.xpresenter.Fragments.ContentDrillDownFragment;
+import com.saiflimited.xpresenter.Fragments.ContentListFragment;
+import com.saiflimited.xpresenter.R;
+
 /**
  * A simple launcher activity containing a summary sample description, sample log and a custom
  * {@link android.support.v4.app.Fragment} which can display a view.
@@ -41,7 +47,6 @@ public class MainActivity extends ActionBarActivity
         implements ContentListFragment.ContentCallBack,
         ContentDrillDownFragment.ContentDrillDownCallBack {
 
-    public static final String TAG = "MainActivity";
 
     private DatabaseHandler db;
 
