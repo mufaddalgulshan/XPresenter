@@ -8,10 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
-import com.saiflimited.xpresenter.Fragments.LoginFragment;
-import com.saiflimited.xpresenter.Fragments.SyncFragment;
-import com.saiflimited.xpresenter.Fragments.ValidateFragment;
 import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.Views.Fragments.LoginFragment;
+import com.saiflimited.xpresenter.Views.Fragments.SyncFragment;
+import com.saiflimited.xpresenter.Views.Fragments.ValidateFragment;
 
 
 public class LoginActivity extends ActionBarActivity implements

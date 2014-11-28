@@ -31,10 +31,10 @@ import android.util.Base64;
 import android.view.View;
 
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
-import com.saiflimited.xpresenter.Fragments.ContentDetailDrillDownFragment;
-import com.saiflimited.xpresenter.Fragments.ContentDrillDownFragment;
-import com.saiflimited.xpresenter.Fragments.ContentListFragment;
 import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.Views.Fragments.ContentDetailDrillDownFragment;
+import com.saiflimited.xpresenter.Views.Fragments.ContentDrillDownFragment;
+import com.saiflimited.xpresenter.Views.Fragments.ContentListFragment;
 
 /**
  * A simple launcher activity containing a summary sample description, sample log and a custom

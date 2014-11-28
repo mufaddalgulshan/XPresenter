@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter.Fragments;
+package com.saiflimited.xpresenter.Views.Fragments;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -18,11 +18,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
-import com.saiflimited.xpresenter.Adapters.ContentListAdapter;
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
 import com.saiflimited.xpresenter.R;
-import com.saiflimited.xpresenter.UI.SlidingTabLayout;
+import com.saiflimited.xpresenter.Views.Adapters.ContentListAdapter;
+import com.saiflimited.xpresenter.Views.Widgets.SlidingTabLayout;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

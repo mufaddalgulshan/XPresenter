@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.saiflimited.xpresenter.Fragments;
+package com.saiflimited.xpresenter.Views.Fragments;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -36,13 +36,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.saiflimited.xpresenter.Adapters.ContentDrillDownAdapter;
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.ContentData.Content;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDetail;
 import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
 import com.saiflimited.xpresenter.R;
-import com.saiflimited.xpresenter.UI.SlidingTabLayout;
+import com.saiflimited.xpresenter.Views.Adapters.ContentDrillDownAdapter;
+import com.saiflimited.xpresenter.Views.Widgets.SlidingTabLayout;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

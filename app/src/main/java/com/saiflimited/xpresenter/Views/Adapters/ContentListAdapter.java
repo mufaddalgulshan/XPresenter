@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter.Adapters;
+package com.saiflimited.xpresenter.Views.Adapters;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

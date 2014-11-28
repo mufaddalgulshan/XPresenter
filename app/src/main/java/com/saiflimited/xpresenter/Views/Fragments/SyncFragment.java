@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter.Fragments;
+package com.saiflimited.xpresenter.Views.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
