@@ -118,12 +118,14 @@ public class ValidateFragment extends Fragment {
             int monthFromDb = Integer.parseInt(loginRestriction.substring(0, 2));
             int month = Integer.parseInt((String) android.text.format.DateFormat.format("MM", date)); //06
 
-            if (month <= monthFromDb) {
+            if (month >= monthFromDb) {
                 int dayFromDb = Integer.parseInt(loginRestriction.substring(3, 5));
                 int day = Integer.parseInt((String) android.text.format.DateFormat.format("dd", date)); //20
                 if (day <= dayFromDb) {
                     valid = true;
                 }
+            } else {
+                valid = true;
             }
         } else {
             valid = true;
