@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:gravity="center_vertical"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/txtPIN"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_medium"
-        android:hint="PIN"
         android:ems="10"
-        android:maxLength="4"
-        android:inputType="numberPassword">
+        android:hint="PIN"
+        android:imeOptions="actionGo"
+        android:inputType="numberPassword"
+        android:maxLength="4">
 
         <requestFocus />
     </EditText>
 
-    <Button
-        android:id="@+id/btnValidate"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_medium"
-        android:text="Validate" />
+        android:gravity="right"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnSendNewPIN"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_medium"
-        android:text="Send New PIN" />
+        <Button
+            android:id="@+id/btnSendNewPIN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:text="Send New PIN" />
+
+        <Button
+            android:id="@+id/btnValidate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:text="Validate" />
+    </LinearLayout>
+
 </LinearLayout>

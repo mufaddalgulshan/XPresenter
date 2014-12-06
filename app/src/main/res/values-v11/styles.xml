@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppBaseTheme" parent="@*android:style/Theme.Holo.Light" />
+
+    <style name="LoginTheme" parent="Theme.AppCompat">
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="HomeTheme" parent="Theme.AppCompat.Light">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 </resources>

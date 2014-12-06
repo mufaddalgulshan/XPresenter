@@ -1,13 +1,12 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="LoginTheme" parent="Theme.AppCompat">
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="HomeTheme" parent="Theme.AppCompat.Light">
         <item name="windowActionBar">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
-    <style name="AppTheme1" parent="Theme.AppCompat.Light">
-        <item name="windowActionBar">false</item>
-        <item name="android:colorControlNormal">@color/accent_material_light</item>
     </style>
 </resources>

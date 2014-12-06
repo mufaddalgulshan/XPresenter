@@ -1,59 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="88dp">
+    android:layout_height="88dp"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:adjustViewBounds="true"
-        android:maxWidth="72dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:maxWidth="40dp"
         android:src="@drawable/logo" />
 
-    <TextView
-        android:id="@+id/lblBrand"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="16dp"
-        android:paddingLeft="72dp"
-        android:text="Brand"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="16sp" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/lblActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/lblBrand"
-        android:ellipsize="marquee"
-        android:paddingLeft="72dp"
-        android:text="Activity"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/lblBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brand"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/lblDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/lblActivity"
-        android:ellipsize="end"
-        android:paddingBottom="20dp"
-        android:paddingLeft="72dp"
-        android:singleLine="true"
-        android:text="Description"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/lblActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:text="Activity"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/lblDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Description"
+            android:textSize="14sp" />
 
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

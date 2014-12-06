@@ -1,48 +1,62 @@
 package com.saiflimited.xpresenter.Activities;
 
-import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
+import com.saiflimited.xpresenter.Fragments.LoginFragment;
+import com.saiflimited.xpresenter.Fragments.SyncFragment;
+import com.saiflimited.xpresenter.Fragments.ValidateFragment;
 import com.saiflimited.xpresenter.R;
-import com.saiflimited.xpresenter.Views.Fragments.LoginFragment;
-import com.saiflimited.xpresenter.Views.Fragments.SyncFragment;
-import com.saiflimited.xpresenter.Views.Fragments.ValidateFragment;
+import com.saiflimited.xpresenter.Utils.Utils;
 
 
 public class LoginActivity extends ActionBarActivity implements
-        LoginFragment.UserCallback,
+        LoginFragment.LoginCallback,
         ValidateFragment.ValidateCallback,
         SyncFragment.SyncCallback {
 
+    private static String LOGO;
+    private static String BACKGROUND;
     DatabaseHandler db;
     TextView lblMessageBox;
     SyncFragment mSyncFragment;
     LoginFragment mLoginFragment;
     ValidateFragment mValidateFragment;
+    private ScrollView container;
+    private ImageView imgLogo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle(appname);
-        toolbar.setBackgroundColor(Color.GRAY);
-        setSupportActionBar(toolbar);
-//
-//        // Now retrieve the DrawerLayout so that we can set the status bar color.
-//        // This only takes effect on Lollipop, or when using translucentStatusBar
-//        // on KitKat.
-//        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
-//        drawerLayout.setBackgroundColor(Color.GRAY);
+        container = (ScrollView) findViewById(R.id.container);
+        imgLogo = (ImageView) findViewById(R.id.imageView1);
 
         this.db = DatabaseHandler.getInstance(this);
         this.lblMessageBox = ((TextView) findViewById(R.id.lblMessageBox));
+
+        LOGO = db.getLogo();
+        BACKGROUND = db.getBackground();
+
+        if (LOGO != null) {
+            imgLogo.setImageBitmap(Utils.getBitmapFromBase64(LOGO));
+        }
+
+        if (BACKGROUND != null) {
+            Drawable background = new BitmapDrawable(Utils.getBitmapFromBase64(BACKGROUND));
+            container.setBackground(background);
+        }
+
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         this.mLoginFragment = new LoginFragment();
         transaction.replace(R.id.sample_content_fragment, this.mLoginFragment);
@@ -57,6 +71,11 @@ public class LoginActivity extends ActionBarActivity implements
             return;
         }
         showMessage(getResources().getString(R.string.error_username));
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        showMessage(message);
     }
 
     @Override

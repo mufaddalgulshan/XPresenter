@@ -12,6 +12,110 @@ public class Content {
     String from;
     String returnCode;
     String message;
+    String brand;
+    String activity;
+    String goal;
+    String dateStart;
+    String dateEnd;
+    String reachDescription;
+    String rule;
+    String implementedBy;
+
+    public String getBrand() {
+        if (brand == null) {
+            return "";
+        } else {
+            return brand;
+        }
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getActivity() {
+        if (activity == null) {
+            return "";
+        } else {
+            return activity;
+        }
+    }
+
+    public void setActivity(String activity) {
+        this.activity = activity;
+    }
+
+    public String getGoal() {
+        if (goal == null) {
+            return "";
+        } else {
+            return goal;
+        }
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
+
+    public String getDateStart() {
+        if (dateStart == null) {
+            return "";
+        } else {
+            return dateStart;
+        }
+    }
+
+    public void setDateStart(String dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public String getDateEnd() {
+        if (dateEnd == null) {
+            return "";
+        } else {
+            return dateEnd;
+        }
+    }
+
+    public void setDateEnd(String dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    public String getReachDescription() {
+        if (reachDescription == null) {
+            return "";
+        } else {
+            return reachDescription;
+        }
+    }
+
+    public void setReachDescription(String reachDescription) {
+        this.reachDescription = reachDescription;
+    }
+
+    public String getRule() {
+        if (rule == null) {
+            return "";
+        } else {
+            return rule;
+        }
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
+    public String getImplementedBy() {
+        if (implementedBy == null) {
+            return "";
+        } else {
+            return implementedBy;
+        }
+    }
+
+    public void setImplementedBy(String implementedBy) {
+        this.implementedBy = implementedBy;
+    }
 
     public String getMessage() {
         if (message == null) {
