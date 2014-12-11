@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter.Models.ContentData;
+package com.saiflimited.xpresenter.Models.Content;
 
 /**
  * Created by mufaddalgulshan on 22/11/14.

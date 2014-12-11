@@ -1,4 +1,4 @@
-package com.saiflimited.xpresenter.Models.ContentData;
+package com.saiflimited.xpresenter.Models.Content;
 
 import java.util.ArrayList;
 

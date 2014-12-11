@@ -56,7 +56,6 @@ public class LoginActivity extends ActionBarActivity implements
             container.setBackground(background);
         }
 
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         this.mLoginFragment = new LoginFragment();
         transaction.replace(R.id.sample_content_fragment, this.mLoginFragment);
@@ -94,6 +93,21 @@ public class LoginActivity extends ActionBarActivity implements
         showMessage(getResources().getString(R.string.error_login_restriction) + " " + username);
     }
 
+    @Override
+    public void onNewContentAvailable() {
+        showMessage(getResources().getString(R.string.new_content_available));
+    }
+
+    @Override
+    public void onSyncMandatory() {
+        showMessage(getResources().getString(R.string.sync_mandatory));
+    }
+
+    @Override
+    public void onSynced() {
+        showMessage("");
+    }
+
     private void showMessage(String paramString) {
         this.lblMessageBox.setText(paramString);
     }
@@ -117,20 +131,5 @@ public class LoginActivity extends ActionBarActivity implements
         this.mSyncFragment.setArguments(bundle);
         transaction.replace(R.id.sample_content_fragment, this.mSyncFragment);
         transaction.commit();
-    }
-
-    @Override
-    public void onNewContentAvailable() {
-        showMessage(getResources().getString(R.string.new_content_available));
-    }
-
-    @Override
-    public void onSyncMandatory() {
-        showMessage(getResources().getString(R.string.sync_mandatory));
-    }
-
-    @Override
-    public void onSynced() {
-        showMessage("");
     }
 }

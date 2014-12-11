@@ -104,7 +104,7 @@ public class ValidateFragment extends Fragment {
             });
 
             btnSendNewPIN.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View paramAnonymousView) {
+                public void onClick(View v) {
                     sendSMS(generatePIN());
                 }
             });
@@ -120,13 +120,13 @@ public class ValidateFragment extends Fragment {
             Date date = new Date();
 
             int lastMonth = Integer.parseInt(loginRestriction.substring(0, 2));
-            int month = Integer.parseInt((String) android.text.format.DateFormat.format("MM", date)); //06
+            int month = Integer.parseInt((String) android.text.format.DateFormat.format("MM", date));
 
             if (month < lastMonth) {
                 valid = true;
             } else if (month == lastMonth) {
                 int lastDay = Integer.parseInt(loginRestriction.substring(3, 5));
-                int day = Integer.parseInt((String) android.text.format.DateFormat.format("dd", date)); //20
+                int day = Integer.parseInt((String) android.text.format.DateFormat.format("dd", date));
                 if (day <= lastDay) {
                     valid = true;
                 }
@@ -189,13 +189,13 @@ public class ValidateFragment extends Fragment {
         SmsManager smsManager = SmsManager.getDefault();
 
         /** Sending the Sms message to the intended party */
-        smsManager.sendTextMessage(number, null, message, null, null);
+//        smsManager.sendTextMessage(number, null, message, null, null);
 
-//        if (mToast == null) {
-//            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
-//        }
-//        mToast.setText(PIN);
-//        mToast.show();
+        if (mToast == null) {
+            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+        }
+        mToast.setText(PIN);
+        mToast.show();
     }
 
     public interface ValidateCallback {

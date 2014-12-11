@@ -1,4 +1,6 @@
-package com.saiflimited.xpresenter.Models.ContentData;
+package com.saiflimited.xpresenter.Models.Content;
+
+import android.net.Uri;
 
 /**
  * Created by mufaddalgulshan on 22/11/14.
@@ -8,6 +10,7 @@ public class ContentItem {
     String id;
     String name;
     String icon;
+    Uri iconUri;
     String htmlBase64;
 
     public String getId() {
@@ -40,5 +43,9 @@ public class ContentItem {
 
     public void setHtmlBase64(String htmlBase64) {
         this.htmlBase64 = htmlBase64;
+    }
+
+    public void setIconUri(Uri iconUri) {
+        this.iconUri = iconUri;
     }
 }

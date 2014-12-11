@@ -2,7 +2,6 @@ package com.saiflimited.xpresenter.Fragments;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
-import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -19,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.R;
+import com.saiflimited.xpresenter.Utils.Utils;
 import com.saiflimited.xpresenter.Views.Widgets.SlidingTabLayout;
 
 public class HomeFragment extends Fragment {
@@ -45,8 +44,7 @@ public class HomeFragment extends Fragment {
         TITLES = getTabNames();
 
         //Get Publisher background
-        byte[] bytes = Base64.decode(db.getBackground(), 0);
-        Bitmap background = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        Bitmap background = Utils.getBitmapFromBase64(db.getBackground());
 
         Palette.generateAsync(background,
                 new Palette.PaletteAsyncListener() {
@@ -55,7 +53,8 @@ public class HomeFragment extends Fragment {
                         mSlidingTabLayout.setBackgroundColor(palette.getVibrantColor(Color.GRAY));
                         mSlidingTabLayout.setSelectedIndicatorColors(palette.getDarkVibrantColor(Color.GRAY));
                     }
-                });
+                }
+        );
 
         mContentListPagerAdapter = new ContentListPagerAdapter(getResources(), getChildFragmentManager());
 
@@ -99,7 +98,8 @@ public class HomeFragment extends Fragment {
      */
     public boolean onBackPressed() {
         // currently visible tab Fragment
-        OnBackPressListener currentFragment = (OnBackPressListener) mContentListPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem());
+        OnBackPressListener currentFragment =
+                (OnBackPressListener) mContentListPagerAdapter.getRegisteredFragment(mViewPager.getCurrentItem());
 
         if (currentFragment != null) {
             // lets see if the currentFragment or any of its childFragment can handle onBackPressed
@@ -135,7 +135,8 @@ public class HomeFragment extends Fragment {
         public Fragment getItem(int i) {
 
             String tabName = TITLES[i];
-            Fragment fragment = ContentsFragment.newInstance(tabName);
+            String format = db.getContentFormat(tabName);
+            Fragment fragment = ContentsFragment.newInstance(tabName, format);
 
             return fragment;
         }

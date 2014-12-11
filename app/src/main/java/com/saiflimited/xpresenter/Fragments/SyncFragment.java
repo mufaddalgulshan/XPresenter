@@ -24,8 +24,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.saiflimited.xpresenter.Activities.HomeActivity;
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
-import com.saiflimited.xpresenter.Models.Content;
-import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
+import com.saiflimited.xpresenter.Models.Content.Content;
+import com.saiflimited.xpresenter.Models.Content.ContentDocument;
 import com.saiflimited.xpresenter.R;
 
 import org.apache.http.HttpResponse;
@@ -477,14 +477,18 @@ public class SyncFragment extends Fragment {
                     String decodedContentDoc = new String(Base64.decode(contentDoc, 0), "UTF-8");
                     Log.i("Sync", "[ContentDocText] " + decodedContentDoc);
 
-                    // Parse JSON to Object
-                    Gson gson = new Gson();
-                    ContentDocument contentDocument = gson.fromJson(decodedContentDoc, ContentDocument.class);
+                    if (jResponse.getString(2).toUpperCase().equals("JSON")) {
+                        // Parse JSON to Object
+                        Gson gson = new Gson();
+                        ContentDocument contentDocument = gson.fromJson(decodedContentDoc, ContentDocument.class);
 
-                    db.updateContentData(contentId, contentDoc, contentDocument);
-                    db.addContentDocument(contentId, contentDocument);
+                        db.updateContentDoc(contentId, contentDoc, contentDocument);
+                        db.addContentDocument(contentId, contentDocument);
 
-                    Log.i("[Sync]", contentId);
+                        Log.i("[Sync]", contentId);
+                    } else if (jResponse.getString(2).toUpperCase().equals("HTML")) {
+                        db.updateContentDoc(contentId, contentDoc);
+                    }
 
                 }
 

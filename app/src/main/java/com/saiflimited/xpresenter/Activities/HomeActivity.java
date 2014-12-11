@@ -17,25 +17,18 @@
 package com.saiflimited.xpresenter.Activities;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
-import com.saiflimited.xpresenter.Fragments.ContentDetailDrillDownFragment;
-import com.saiflimited.xpresenter.Fragments.ContentDrillDownFragment;
-import com.saiflimited.xpresenter.Fragments.ContentsFragment;
 import com.saiflimited.xpresenter.Fragments.HomeFragment;
 import com.saiflimited.xpresenter.R;
 import com.saiflimited.xpresenter.Utils.Utils;
@@ -47,11 +40,7 @@ import com.saiflimited.xpresenter.Utils.Utils;
  * For devices with displays with a width of 720dp or greater, the sample log is always visible,
  * on other devices it's visibility is controlled by an item on the Action Bar.
  */
-public class HomeActivity extends ActionBarActivity
-        implements
-//        HomeFragment.ContentCallBack,
-        ContentDrillDownFragment.ContentDrillDownCallBack,
-        ContentsFragment.OnFragmentInteractionListener {
+public class HomeActivity extends ActionBarActivity {
 
     private DatabaseHandler db;
 
@@ -67,7 +56,7 @@ public class HomeActivity extends ActionBarActivity
         db = DatabaseHandler.getInstance(this);
 
         //Get Publisher background Bitmap
-        background = getBackground();
+        background = Utils.getBitmapFromBase64(db.getBackground());
 
         //Set toolbar title and background
         setupToolbar();
@@ -96,11 +85,6 @@ public class HomeActivity extends ActionBarActivity
                 .commit();
     }
 
-    private Bitmap getBackground() {
-        byte[] bytes = Base64.decode(db.getBackground(), 0);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
-
     private void setupToolbar() {
 
         //Get app name from db
@@ -109,7 +93,7 @@ public class HomeActivity extends ActionBarActivity
         Drawable toolbarBackground = new BitmapDrawable(background);
 
         //Set toolbar properties
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(appname);
         setSupportActionBar(toolbar);
         toolbar.setBackground(toolbarBackground);
@@ -123,35 +107,12 @@ public class HomeActivity extends ActionBarActivity
                 new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(Palette palette) {
-                        // do something with the colors
-                        drawerLayout.setStatusBarBackgroundColor(palette.getDarkVibrantColor(Color.GRAY));
+                        drawerLayout.setStatusBarBackgroundColor(palette.getDarkVibrantColor(Color.DKGRAY));
+                        toolbar.setTitleTextColor(palette.getDarkVibrantColor(Color.DKGRAY));
+                        toolbar.setBackgroundColor(palette.getVibrantColor(Color.DKGRAY));
                     }
-                });
-    }
-
-
-//    @Override
-//    public void onContentItemListClick(View view, int position, long contentId) {
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        ContentDrillDownFragment fragment = new ContentDrillDownFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("position", (int) contentId);
-//        fragment.setArguments(bundle);
-//        transaction.replace(R.id.sample_content_fragment, fragment);
-//        transaction.addToBackStack(fragment.getTag());
-//        transaction.commit();
-//    }
-
-    @Override
-    public void onContentDrillDownItemClick(View view, int position, long seq) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        ContentDetailDrillDownFragment fragment = new ContentDetailDrillDownFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("sequence", (int) seq);
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.sample_content_fragment, fragment);
-        transaction.addToBackStack(fragment.getTag());
-        transaction.commit();
+                }
+        );
     }
 
     /**
@@ -178,8 +139,4 @@ public class HomeActivity extends ActionBarActivity
         }
     }
 
-    @Override
-    public void onFragmentInteraction(String id) {
-
-    }
 }

@@ -5,15 +5,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.util.Log;
 
-import com.saiflimited.xpresenter.Models.Content;
-import com.saiflimited.xpresenter.Models.ContentData.ContentDetail;
-import com.saiflimited.xpresenter.Models.ContentData.ContentDocument;
-import com.saiflimited.xpresenter.Models.ContentData.ContentItem;
-import com.saiflimited.xpresenter.Models.ContentData.ContentItemList;
+import com.saiflimited.xpresenter.Models.Content.Content;
+import com.saiflimited.xpresenter.Models.Content.ContentDetail;
+import com.saiflimited.xpresenter.Models.Content.ContentDocument;
+import com.saiflimited.xpresenter.Models.Content.ContentItem;
+import com.saiflimited.xpresenter.Models.Content.ContentItemList;
 import com.saiflimited.xpresenter.Models.Publisher.ContentType;
 import com.saiflimited.xpresenter.Models.Publisher.Publisher;
-import com.saiflimited.xpresenter.Models.User;
+import com.saiflimited.xpresenter.Models.User.User;
+import com.saiflimited.xpresenter.Utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,6 +118,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE ContentItem(  " +
                 "  seq INTEGER NOT NULL" +
                 ", id INTEGER NOT NULL " +
+                ", contentId INTEGER NOT NULL" +
                 ", name TEXT NOT NULL" +
                 ", icon BLOB NOT NULL" +
                 ", htmlBase64 BLOB NOT NULL" +
@@ -128,6 +132,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS PublisherContentType");
         db.execSQL("DROP TABLE IF EXISTS User");
         db.execSQL("DROP TABLE IF EXISTS Content");
+        db.execSQL("DROP TABLE IF EXISTS ContentDetail");
+        db.execSQL("DROP TABLE IF EXISTS ContentItem");
         onCreate(db);
     }
     //endregion
@@ -393,17 +399,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return str;
     }
 
-    public String getFormat(CharSequence label) {
-        Cursor localCursor = getReadableDatabase().rawQuery("SELECT format FROM PublisherContentType WHERE label = '" + label + "'", null);
-        int i = localCursor.getCount();
-        String str = null;
-        if (i > 0) {
-            localCursor.moveToNext();
-            str = localCursor.getString(0);
-        }
-        return str;
-    }
-
     public String getAppName() {
         Cursor localCursor = getReadableDatabase().rawQuery("SELECT appname FROM Publisher ", null);
         int i = localCursor.getCount();
@@ -417,6 +412,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //endregion
 
     //region Content
+
+    //region Add
     public long addContent(Content content) {
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -442,47 +439,52 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return l;
     }
 
-    public void deleteContent() {
-        SQLiteDatabase writableDatabase = getWritableDatabase();
-        writableDatabase.delete("Content", null, null);
-        writableDatabase.rawQuery("DELETE FROM Content", null);
-        writableDatabase.close();
-    }
-
-    public Cursor getAllContentId() {
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT id FROM Content", null);
-        if (cursor.getCount() > 0) {
-            cursor.moveToNext();
-            return cursor;
-        }
-        return null;
-    }
-
-    public int getContentCount() {
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT * from Content", null);
-        if (cursor != null) {
-            return cursor.getCount();
-        }
-        return 0;
-    }
-
-    public String getContentDoc(int contentId) {
-        //TODO change to id
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT contentData FROM Content WHERE id = 1"/* + contentId*/, null);
-        if ((cursor.getCount() > 0) && (cursor != null)) {
-            cursor.moveToNext();
-        }
-        for (String str = cursor.getString(0); ; str = null) {
-            cursor.close();
-            return str;
+    public void addContentDocument(String contentId, ContentDocument contentDocument) {
+        ArrayList<ContentDetail> contentDetails = contentDocument.getContent().getContentDetailList();
+        for (int i = 0; i < contentDetails.size(); i++) {
+            addContentDetail(contentId, contentDetails.get(i));
+            ArrayList<ContentItemList> contentItemLists = contentDetails.get(i).getContentItemList();
+            for (int j = 0; j < contentItemLists.size(); j++) {
+                addContentItem(contentDetails.get(i).getSeq(), contentId, contentItemLists.get(j).getContentItem());
+            }
         }
     }
 
-    public void updateContentData(String contentId, String contentData, ContentDocument contentDocument) {
-        SQLiteDatabase readableDatabase = getReadableDatabase();
-        com.saiflimited.xpresenter.Models.ContentData.Content content = contentDocument.getContent();
+    public long addContentItem(String seq, String contentId, ContentItem contentItem) {
+        SQLiteDatabase database = getWritableDatabase();
+
+        Uri uri = Utils.getUri(contentItem.getIcon(), contentItem.getName());
+        contentItem.setIcon(uri.toString());
+        Log.i("URI", uri.toString());
         ContentValues values = new ContentValues();
-        values.put("contentData", contentData);
+        values.put("seq", seq);
+        values.put("id", contentItem.getId());
+        values.put("contentId", contentId);
+        values.put("name", contentItem.getName());
+        values.put("icon", contentItem.getIcon());
+        values.put("htmlBase64", contentItem.getHtmlBase64());
+        long l = database.insert("ContentItem", null, values);
+        database.close();
+        return l;
+    }
+
+    public long addContentDetail(String contentId, ContentDetail contentDetail) {
+        SQLiteDatabase database = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", contentId);
+        values.put("seq", contentDetail.getSeq());
+        values.put("name", contentDetail.getName());
+        long l = database.insert("ContentDetail", null, values);
+        database.close();
+        return l;
+    }
+
+    //JSON Content Document
+    public void updateContentDoc(String contentId, String contentDoc, ContentDocument contentDocument) {
+        SQLiteDatabase readableDatabase = getReadableDatabase();
+        Content content = contentDocument.getContent();
+        ContentValues values = new ContentValues();
+        values.put("contentData", contentDoc);
         values.put("brand", content.getBrand());
         values.put("activity", content.getActivity());
         values.put("goal", content.getGoal());
@@ -494,15 +496,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         readableDatabase.update("Content", values, "id = ?", new String[]{contentId});
     }
 
-    public String getLastContentUpdateDate(int contentId) {
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT lastUpdated FROM Content WHERE id = '" + contentId + "'", null);
-        int i = cursor.getCount();
-        String str = null;
-        if (i > 0) {
-            cursor.moveToNext();
-            str = cursor.getString(0);
-        }
-        return str;
+    //HTML Content Document
+    public void updateContentDoc(String contentId, String contentDoc) {
+        SQLiteDatabase readableDatabase = getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("contentData", contentDoc);
+        readableDatabase.update("Content", values, "id = ?", new String[]{contentId});
+    }
+
+    public void deleteContent() {
+        deleteContentDetail();
+        deleteContentItem();
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        writableDatabase.delete("Content", null, null);
+        writableDatabase.close();
+    }
+
+    public void deleteContentItem() {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        writableDatabase.delete("ContentItem", null, null);
+        writableDatabase.close();
+    }
+
+    public void deleteContentDetail() {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        writableDatabase.delete("ContentDetail", null, null);
+        writableDatabase.close();
     }
 
     public boolean contentExists() {
@@ -518,48 +537,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return valid;
     }
 
-    public void addContentDocument(String contentId, ContentDocument contentDocument) {
-        ArrayList<ContentDetail> contentDetails = contentDocument.getContent().getContentDetailList();
-        for (int i = 0; i < contentDetails.size(); i++) {
-            addContentDetail(contentId, contentDetails.get(i));
-            ArrayList<ContentItemList> contentItemLists = contentDetails.get(i).getContentItemList();
-            for (int j = 0; j < contentItemLists.size(); j++) {
-                addContentItem(contentDetails.get(i).getSeq(), contentItemLists.get(j).getContentItem());
-            }
-        }
-    }
-
-    private long addContentItem(String seq, ContentItem contentItem) {
-        SQLiteDatabase database = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("seq", seq);
-        values.put("id", contentItem.getId());
-        values.put("name", contentItem.getName());
-        values.put("icon", contentItem.getIcon());
-        values.put("htmlBase64", contentItem.getHtmlBase64());
-        long l = database.insert("ContentItem", null, values);
-        database.close();
-        return l;
-    }
-
-    private long addContentDetail(String contentId, ContentDetail contentDetail) {
-        SQLiteDatabase database = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("id", contentId);
-        values.put("seq", contentDetail.getSeq());
-        values.put("name", contentDetail.getName());
-        long l = database.insert("ContentDetail", null, values);
-        database.close();
-        return l;
-    }
-
-    public Cursor getContentIdsForType(String type) {
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT id FROM Content where type = '" + type + "'", null);
+    public Cursor getAllContentId() {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT id FROM Content", null);
         if (cursor.getCount() > 0) {
             cursor.moveToNext();
             return cursor;
         }
         return null;
+    }
+
+    public String getContentDoc(String label) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT c.contentData" +
+                " FROM content c " +
+                " INNER JOIN PublisherContentType p " +
+                " ON LOWER(c.type) = LOWER(p.code) " +
+                " AND LOWER(p.label) = '" + label.toLowerCase() + "'" +
+                " AND LOWER(c.format) = 'html' ";
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor != null) {
+            cursor.moveToNext();
+        }
+
+        return cursor.getString(0);
+    }
+
+    public String getLastContentUpdateDate(int contentId) {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT lastUpdated FROM Content WHERE id = '" + contentId + "'", null);
+        int i = cursor.getCount();
+        String str = null;
+        if (i > 0) {
+            cursor.moveToNext();
+            str = cursor.getString(0);
+        }
+        return str;
     }
 
     public Cursor getContentList(String label) {
@@ -569,11 +583,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ", brand" +
                 ", activity" +
                 ", goal " +
-                "FROM content c " +
-                "INNER JOIN PublisherContentType p " +
-                "ON c.type = p.code " +
-                "AND p.label = '" + label + "'" +
-                "ORDER BY brand ASC";
+                " FROM content c " +
+                " INNER JOIN PublisherContentType p ";
+
+        //TODO remove if statement
+        if (label.toLowerCase().equals("marcas")) {
+            sql = sql + "ON LOWER(c.type) = 'brand' ";
+        } else {
+            sql = sql + "ON LOWER(c.type) = LOWER(p.code) ";
+        }
+
+        sql = sql +
+                " AND LOWER(p.label) = '" + label.toLowerCase() + "'" +
+                " AND c.format = 'JSON' " +
+                " ORDER BY brand ASC";
 
         Cursor cursor = db.rawQuery(sql, null);
         if (cursor != null) {
@@ -582,6 +605,80 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return cursor;
     }
+
+    public Cursor getContentDrilldown(long contentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT seq as _id" +
+                ", name " +
+                "FROM ContentDetail " +
+                "WHERE id = " + contentId +
+                " ORDER BY name ASC";
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor != null) {
+            cursor.moveToNext();
+        }
+
+        return cursor;
+    }
+
+    public Cursor getContentDetailsDrilldown(long contentId, int seq) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT id as _id" +
+                ", name" +
+                ", icon " +
+                " FROM ContentItem " +
+                " WHERE seq = " + seq +
+                " AND contentId = " + contentId +
+                " ORDER BY name ASC";
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor != null) {
+            cursor.moveToNext();
+        }
+
+        return cursor;
+    }
+
+    public Content getContent(long contentId) {
+        Content content = new Content();
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT " +
+                "brand" +
+                ", activity" +
+                ", goal" +
+                ", dateStart" +
+                ", reachDescription" +
+                ", rule" +
+                " FROM Content WHERE id = " + contentId, null);
+
+        if ((cursor.getCount() > 0) && (cursor != null)) {
+            cursor.moveToNext();
+        }
+
+        content.setBrand(cursor.getString(0));
+        content.setActivity(cursor.getString(1));
+        content.setGoal(cursor.getString(2));
+        content.setDateStart(cursor.getString(3));
+        content.setReachDescription(cursor.getString(4));
+        content.setRule(cursor.getString(5));
+
+        return content;
+    }
+
+    public String getContentFormat(String label) {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT format FROM PublisherContentType" +
+                " WHERE label = '" + label + "'", null);
+        int i = cursor.getCount();
+        String str = null;
+        if (i > 0) {
+            cursor.moveToNext();
+            str = cursor.getString(0);
+        }
+        return str;
+    }
     //endregion
+
 
 }

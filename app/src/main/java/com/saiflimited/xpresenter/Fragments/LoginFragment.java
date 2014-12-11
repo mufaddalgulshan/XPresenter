@@ -29,7 +29,7 @@ import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.Models.Publisher.ContentType;
 import com.saiflimited.xpresenter.Models.Publisher.GetPublisherList;
 import com.saiflimited.xpresenter.Models.Publisher.Publisher;
-import com.saiflimited.xpresenter.Models.User;
+import com.saiflimited.xpresenter.Models.User.User;
 import com.saiflimited.xpresenter.R;
 import com.saiflimited.xpresenter.Utils.GPSTracker;
 import com.saiflimited.xpresenter.Utils.Utils;
