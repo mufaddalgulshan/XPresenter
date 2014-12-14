@@ -67,11 +67,10 @@ public class ValidateFragment extends Fragment {
             btnSendNewPIN = (Button) view.findViewById(R.id.btnSendNewPIN);
             txtPIN = ((EditText) view.findViewById(R.id.txtPIN));
 
+            mPIN = db.getPIN(username);
+
             if (mFirstAccess) {
                 sendSMS(String.valueOf(generatePIN()));
-                btnSendNewPIN.setVisibility(View.VISIBLE);
-            } else {
-                btnSendNewPIN.setVisibility(View.GONE);
             }
 
             btnValidate.setOnClickListener(new View.OnClickListener() {
@@ -163,20 +162,12 @@ public class ValidateFragment extends Fragment {
 
     protected boolean validatePIN() {
 
-        if (mFirstAccess) {
-            if (txtPIN.getText().toString().equals(mPIN)) {
-                db.updatePIN(username, mPIN);
-                Log.i("ValidateFragment", "PIN updated " + mPIN);
-                return true;
-            } else {
-                return false;
-            }
+        if (txtPIN.getText().toString().equals(mPIN)) {
+            db.updatePIN(username, mPIN);
+            Log.i("ValidateFragment", "PIN updated " + mPIN);
+            return true;
         } else {
-            if (db.validatePIN(username, txtPIN.getText().toString())) {
-                return true;
-            } else {
-                return false;
-            }
+            return false;
         }
     }
 
@@ -189,13 +180,13 @@ public class ValidateFragment extends Fragment {
         SmsManager smsManager = SmsManager.getDefault();
 
         /** Sending the Sms message to the intended party */
-//        smsManager.sendTextMessage(number, null, message, null, null);
+        smsManager.sendTextMessage(number, null, message, null, null);
 
-        if (mToast == null) {
-            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
-        }
-        mToast.setText(PIN);
-        mToast.show();
+//        if (mToast == null) {
+//            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+//        }
+//        mToast.setText(PIN);
+//        mToast.show();
     }
 
     public interface ValidateCallback {
