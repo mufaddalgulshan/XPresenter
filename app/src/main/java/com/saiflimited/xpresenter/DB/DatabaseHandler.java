@@ -111,7 +111,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ", implementedBy TEXT NOT NULL" +
                 ", icon BLOB NOT NULL" +
                 ", image BLOB NOT NULL )");
-//                ", contentData BLOB )");
 
         db.execSQL("CREATE TABLE ContentDetail(  " +
                 "  id INTEGER " +
@@ -699,6 +698,40 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public String getHtmlBase64(long contentItemId) {
         Cursor cursor = getReadableDatabase().rawQuery("SELECT htmlbase64 FROM ContentItem" +
                 " WHERE id = '" + contentItemId + "'", null);
+        int i = cursor.getCount();
+        String str = null;
+        if (i > 0) {
+            cursor.moveToNext();
+            str = cursor.getString(0);
+        }
+        return str;
+    }
+
+    public Cursor getMessageList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT id as _id" +
+                ", [from]" +
+                ", fromDate" +
+                ", name " +
+                "  FROM content c " +
+                "  INNER JOIN PublisherContentType p " +
+                "  ON LOWER(c.type) = LOWER(p.code) " +
+                "  AND LOWER(p.label) = 'mensagens' " +
+                "  AND LOWER(c.format) = 'html' " +
+                "  ORDER BY id ASC";
+
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor != null) {
+            cursor.moveToNext();
+        }
+
+        return cursor;
+    }
+
+    public String getMessage(long messageId) {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT contentData FROM Content" +
+                " WHERE id = '" + messageId + "'", null);
         int i = cursor.getCount();
         String str = null;
         if (i > 0) {

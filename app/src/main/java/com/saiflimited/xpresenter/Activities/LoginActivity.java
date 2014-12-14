@@ -95,12 +95,12 @@ public class LoginActivity extends ActionBarActivity implements
 
     @Override
     public void onNewContentAvailable() {
-        showMessage(getResources().getString(R.string.new_content_available));
+        showMessage(getResources().getString(R.string.info_new_content_available));
     }
 
     @Override
     public void onSyncMandatory() {
-        showMessage(getResources().getString(R.string.sync_mandatory));
+        showMessage(getResources().getString(R.string.info_sync_mandatory));
     }
 
     @Override

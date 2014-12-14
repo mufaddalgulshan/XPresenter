@@ -61,14 +61,23 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
             tabName = getArguments().getString(TAB_NAME);
             format = getArguments().getString(FORMAT);
         }
+
         if (format.toUpperCase().equals("JSON")) {
-            Cursor namesCursor = db.getContentList(tabName);
-            Log.i("[Icon URI]", namesCursor.getString(4));
+
+            Cursor contentList = db.getContentList(tabName);
+            Log.i("[Icon URI]", contentList.getString(4));
             String fromColumns[] = {"brand", "activity", "goal", "icon"};
             int toViews[] = {R.id.lblBrand, R.id.lblActivity, R.id.lblDesc, R.id.icon};
             mAdapter = new SimpleCursorAdapter(getActivity(),
-                    R.layout.list_item_content_list, namesCursor, fromColumns, toViews);
-        } else if (format.toUpperCase().equals("HTML")) {
+                    R.layout.list_item_content_list, contentList, fromColumns, toViews);
+
+        } else if (format.toUpperCase().equals("HTML") && tabName.toUpperCase().equals("MENSAGENS")) {
+
+            Cursor messageList = db.getMessageList();
+            String fromColumns[] = {"from", "fromDate", "name"};
+            int toViews[] = {R.id.lblFrom, R.id.lblFromDate, R.id.lblDesc};
+            mAdapter = new SimpleCursorAdapter(getActivity(),
+                    R.layout.list_item_content_list_msg, messageList, fromColumns, toViews);
 
         }
     }
@@ -78,7 +87,7 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
                              Bundle savedInstanceState) {
         View view;
 
-        if (format.toUpperCase().equals("JSON")) {
+        if (format.toUpperCase().equals("JSON") || tabName.toUpperCase().equals("MENSAGENS")) {
 
             view = inflater.inflate(R.layout.fragment_content, container, false);
 
@@ -105,7 +114,12 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Fragment fragment = ContentDetailFragment.newInstance(id);
+        Fragment fragment;
+        if (tabName.toUpperCase().equals("MENSAGENS")) {
+            fragment = ContentItemFragment.newInstance(id, tabName);
+        } else {
+            fragment = ContentDetailFragment.newInstance(id);
+        }
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
         // Store the Fragment in stack

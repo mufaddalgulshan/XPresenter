@@ -19,8 +19,10 @@ public class ContentItemFragment extends RootFragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String CONTENT_ITEM_ID = "CONTENT_ITEM_ID";
+    private static final String TAB_NAME = "TAB_NAME";
 
     private long contentItemId;
+    private String tabName;
     private DatabaseHandler db;
 
     public ContentItemFragment() {
@@ -34,10 +36,11 @@ public class ContentItemFragment extends RootFragment {
      * @param contentItemId Parameter 1.
      * @return A new instance of fragment ContentItemFragment.
      */
-    public static ContentItemFragment newInstance(long contentItemId) {
+    public static ContentItemFragment newInstance(long contentItemId, String tabName) {
         ContentItemFragment fragment = new ContentItemFragment();
         Bundle args = new Bundle();
         args.putLong(CONTENT_ITEM_ID, contentItemId);
+        args.putString(TAB_NAME, tabName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,6 +50,7 @@ public class ContentItemFragment extends RootFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             contentItemId = getArguments().getLong(CONTENT_ITEM_ID);
+            tabName = getArguments().getString(TAB_NAME);
         }
         db = DatabaseHandler.getInstance(getActivity());
     }
@@ -58,7 +62,11 @@ public class ContentItemFragment extends RootFragment {
         WebView webView = (WebView) view.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        webView.loadData(db.getHtmlBase64(contentItemId), "text/html; charset=UTF-8", "base64");
+        if (tabName.toUpperCase().equals("MENSAGENS")) {
+            webView.loadData(db.getMessage(contentItemId), "text/html; charset=UTF-8", "base64");
+        } else {
+            webView.loadData(db.getHtmlBase64(contentItemId), "text/html; charset=UTF-8", "base64");
+        }
         return view;
     }
 }

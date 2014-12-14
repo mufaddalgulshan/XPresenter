@@ -120,7 +120,7 @@ public class ContentDetailFragment extends RootFragment implements ExpandableLis
 
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-        Fragment fragment = ContentItemFragment.newInstance(id);
+        Fragment fragment = ContentItemFragment.newInstance(id, "");
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         Log.i("[groupPosition]", String.valueOf(groupPosition));
         Log.i("[childPosition]", String.valueOf(childPosition));
