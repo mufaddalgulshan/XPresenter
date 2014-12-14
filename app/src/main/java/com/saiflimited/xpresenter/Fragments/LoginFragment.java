@@ -240,6 +240,7 @@ public class LoginFragment extends Fragment {
 
                 public void onClick(View v) {
                     userExists = db.usernameExists(txtUsername.getText().toString());
+
                     firstAccess = isFirstAccess(txtUsername.getText().toString());
 
                     if (firstAccess) {

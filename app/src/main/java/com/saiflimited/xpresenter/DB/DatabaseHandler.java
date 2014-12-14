@@ -27,6 +27,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static DatabaseHandler mInstance = null;
+    private Context context;
 
     private SimpleDateFormat dtFormatterForDB = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
@@ -38,6 +39,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     private DatabaseHandler(Context context) {
         super(context, "IPREMIOS", null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static DatabaseHandler getInstance(Context ctx) {
@@ -106,7 +108,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ", dateEnd TEXT NOT NULL" +
                 ", reachDescription TEXT NOT NULL" +
                 ", rule TEXT NOT NULL" +
-                ", implementedBy TEXT NOT NULL )");
+                ", implementedBy TEXT NOT NULL" +
+                ", icon BLOB NOT NULL" +
+                ", image BLOB NOT NULL )");
 //                ", contentData BLOB )");
 
         db.execSQL("CREATE TABLE ContentDetail(  " +
@@ -196,6 +200,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return true;
     }
 
+    public String getPIN(String username) {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT pin FROM User WHERE username = '" + username + "'", null);
+        int i = cursor.getCount();
+        String str = null;
+        if (i > 0) {
+            cursor.moveToNext();
+            str = cursor.getString(0);
+        }
+        return str;
+    }
+
     public boolean updatePIN(String username, String PIN) {
         SQLiteDatabase readableDatabase = getReadableDatabase();
         ContentValues values = new ContentValues();
@@ -241,20 +256,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             valid = false;
             if (i > 0) {
                 valid = true;
-            }
-        }
-        return valid;
-    }
-
-    public boolean validatePIN(String username, String PIN) {
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT pin from User WHERE username = '" + username + "'", null);
-        boolean valid = false;
-        if (cursor != null) {
-            cursor.moveToNext();
-            if (cursor.getString(0).equals(PIN)) {
-                valid = true;
-            } else {
-                valid = false;
             }
         }
         return valid;
@@ -434,6 +435,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("reachDescription", content.getReachDescription());
         values.put("rule", content.getRule());
         values.put("implementedBy", content.getImplementedBy());
+        values.put("icon", content.getIcon());
+        values.put("image", content.getImage());
         long l = database.insert("Content", null, values);
         database.close();
         return l;
@@ -453,9 +456,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public long addContentItem(String seq, String contentId, ContentItem contentItem) {
         SQLiteDatabase database = getWritableDatabase();
 
-        Uri uri = Utils.getUri(contentItem.getIcon(), contentItem.getName());
+        Uri uri = Utils.getUri(contentItem.getIcon(), contentId + "_" + contentItem.getName(), context);
         contentItem.setIcon(uri.toString());
-        Log.i("URI", uri.toString());
+        Log.i("Content Item URI", uri.toString());
         ContentValues values = new ContentValues();
         values.put("seq", seq);
         values.put("id", contentItem.getId());
@@ -482,7 +485,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //JSON Content Document
     public void updateContentDoc(String contentId, String contentDoc, ContentDocument contentDocument) {
         SQLiteDatabase readableDatabase = getReadableDatabase();
+
         Content content = contentDocument.getContent();
+
+        Uri uri = Utils.getUri(content.getIcon(), "icon_" + content.getBrand(), context);
+        content.setIcon(uri.toString());
+        Log.i("Icon URI", uri.toString());
+        uri = Utils.getUri(content.getImage(), "image_" + content.getBrand(), context);
+        content.setImage(uri.toString());
+        Log.i("Image URI", uri.toString());
+
         ContentValues values = new ContentValues();
         values.put("contentData", contentDoc);
         values.put("brand", content.getBrand());
@@ -493,6 +505,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("reachDescription", content.getReachDescription());
         values.put("rule", content.getRule());
         values.put("implementedBy", content.getImplementedBy());
+        values.put("icon", content.getIcon());
+        values.put("image", content.getImage());
         readableDatabase.update("Content", values, "id = ?", new String[]{contentId});
     }
 
@@ -583,6 +597,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ", brand" +
                 ", activity" +
                 ", goal " +
+                ", icon " +
                 " FROM content c " +
                 " INNER JOIN PublisherContentType p ";
 
@@ -651,6 +666,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ", dateStart" +
                 ", reachDescription" +
                 ", rule" +
+                ", image" +
                 " FROM Content WHERE id = " + contentId, null);
 
         if ((cursor.getCount() > 0) && (cursor != null)) {
@@ -663,6 +679,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         content.setDateStart(cursor.getString(3));
         content.setReachDescription(cursor.getString(4));
         content.setRule(cursor.getString(5));
+        content.setImage(cursor.getString(6));
 
         return content;
     }
@@ -678,6 +695,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         return str;
     }
+
+    public String getHtmlBase64(long contentItemId) {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT htmlbase64 FROM ContentItem" +
+                " WHERE id = '" + contentItemId + "'", null);
+        int i = cursor.getCount();
+        String str = null;
+        if (i > 0) {
+            cursor.moveToNext();
+            str = cursor.getString(0);
+        }
+        return str;
+    }
+
     //endregion
 
 

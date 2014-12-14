@@ -25,6 +25,8 @@ public class Content {
     String reachDescription;
     String rule;
     String implementedBy;
+    String icon;
+    String image;
     ArrayList<ContentDetail> contentDetailList;
 
     public String getBrand() {
@@ -257,5 +259,29 @@ public class Content {
 
     public void setContentDetailList(ArrayList<ContentDetail> contentDetailList) {
         this.contentDetailList = contentDetailList;
+    }
+
+    public String getIcon() {
+        if (icon == null) {
+            return "";
+        } else {
+            return icon;
+        }
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getImage() {
+        if (image == null) {
+            return "";
+        } else {
+            return image;
+        }
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

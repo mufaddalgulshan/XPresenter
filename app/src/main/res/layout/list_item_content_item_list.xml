@@ -14,8 +14,7 @@
             android:layout_width="96dp"
             android:layout_height="128dp"
             android:adjustViewBounds="true"
-            android:scaleType="fitStart"
-            android:src="@drawable/pic1" />
+            android:scaleType="fitStart" />
 
         <View
             android:layout_width="1dp"

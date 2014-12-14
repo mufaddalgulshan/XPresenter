@@ -40,7 +40,7 @@ public class ContentAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_item_contentdetails_drilldown_json, null);
+            convertView = infalInflater.inflate(R.layout.list_item_content_item_list, null);
         }
 
         TextView txtListChild = (TextView) convertView
@@ -78,7 +78,7 @@ public class ContentAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_item_contents_drilldown, null);
+            convertView = infalInflater.inflate(R.layout.list_item_content_detail_list, null);
         }
 
         TextView lblListHeader = (TextView) convertView

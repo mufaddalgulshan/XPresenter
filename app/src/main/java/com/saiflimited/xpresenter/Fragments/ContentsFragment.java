@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,10 +63,11 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
         }
         if (format.toUpperCase().equals("JSON")) {
             Cursor namesCursor = db.getContentList(tabName);
-            String fromColumns[] = {"brand", "activity", "goal"};
-            int toViews[] = {R.id.lblBrand, R.id.lblActivity, R.id.lblDesc};
+            Log.i("[Icon URI]", namesCursor.getString(4));
+            String fromColumns[] = {"brand", "activity", "goal", "icon"};
+            int toViews[] = {R.id.lblBrand, R.id.lblActivity, R.id.lblDesc, R.id.icon};
             mAdapter = new SimpleCursorAdapter(getActivity(),
-                    R.layout.list_item_content, namesCursor, fromColumns, toViews);
+                    R.layout.list_item_content_list, namesCursor, fromColumns, toViews);
         } else if (format.toUpperCase().equals("HTML")) {
 
         }
@@ -78,7 +80,7 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
 
         if (format.toUpperCase().equals("JSON")) {
 
-            view = inflater.inflate(R.layout.fragment_contents, container, false);
+            view = inflater.inflate(R.layout.fragment_content, container, false);
 
             // Set the adapter
             mListView = (AbsListView) view.findViewById(R.id.listView);
@@ -90,7 +92,7 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
 
         } else {
 
-            view = inflater.inflate(R.layout.fragment_contents_html, container, false);
+            view = inflater.inflate(R.layout.fragment_webview, container, false);
             WebView webView = (WebView) view.findViewById(R.id.webView);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
@@ -103,7 +105,7 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Fragment fragment = ContentsDrilldownFragment.newInstance(id);
+        Fragment fragment = ContentDetailFragment.newInstance(id);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 
         // Store the Fragment in stack

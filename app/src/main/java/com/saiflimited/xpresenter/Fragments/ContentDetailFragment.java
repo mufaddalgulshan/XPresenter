@@ -4,11 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +27,7 @@ import com.saiflimited.xpresenter.R;
  * with a GridView.
  * <p/>
  */
-public class ContentsDrilldownFragment extends RootFragment implements ExpandableListView.OnItemClickListener {
+public class ContentDetailFragment extends RootFragment implements ExpandableListView.OnChildClickListener {
 
     // the fragment initialization parameters
     private static final String CONTENT_ID = "CONTENT_ID";
@@ -49,11 +50,11 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ContentsDrilldownFragment() {
+    public ContentDetailFragment() {
     }
 
-    public static ContentsDrilldownFragment newInstance(long contentId) {
-        ContentsDrilldownFragment fragment = new ContentsDrilldownFragment();
+    public static ContentDetailFragment newInstance(long contentId) {
+        ContentDetailFragment fragment = new ContentDetailFragment();
         Bundle args = new Bundle();
         args.putLong(CONTENT_ID, contentId);
         fragment.setArguments(args);
@@ -77,7 +78,7 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_contentsdrilldown, container, false);
+        View view = inflater.inflate(R.layout.fragment_content_detail, container, false);
 
         // Set the adapter
         mListView = (ExpandableListView) view.findViewById(android.R.id.list);
@@ -85,7 +86,7 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
         LinearLayout listHeaderView = (LinearLayout) layoutInflater.inflate(
-                R.layout.list_header, null);
+                R.layout.content_header, null);
 
         Content content = db.getContent(contentId);
 
@@ -95,6 +96,7 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
         TextView lblDateStart = (TextView) listHeaderView.findViewById(R.id.lblDateStart);
         TextView lblReachDesc = (TextView) listHeaderView.findViewById(R.id.lblReachDesc);
         TextView lblRule = (TextView) listHeaderView.findViewById(R.id.lblRule);
+        ImageView imgHeader = (ImageView) listHeaderView.findViewById(R.id.imgHeader);
 
         lblBrand.setText(content.getBrand());
         lblActivity.setText(content.getActivity());
@@ -102,20 +104,32 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
         lblDateStart.setText(content.getDateStart());
         lblReachDesc.setText(content.getReachDescription());
         lblRule.setText(content.getRule());
+        imgHeader.setImageURI(Uri.parse(content.getImage()));
+        Log.i("[Content Header]", content.getImage());
 
         mListView.addHeaderView(listHeaderView);
 
 
         mListView.setAdapter(mAdapter);
 
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
+        // Set OnChildClickListener so we can be notified on item clicks
+        mListView.setOnChildClickListener(this);
 
         return view;
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        Fragment fragment = ContentItemFragment.newInstance(id);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        Log.i("[groupPosition]", String.valueOf(groupPosition));
+        Log.i("[childPosition]", String.valueOf(childPosition));
+        Log.i("[id]", String.valueOf(id));
+
+        // Store the Fragment in stack
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.container, fragment).commit();
+        return false;
     }
 
     private class ContentsTreeAdapter extends SimpleCursorTreeAdapter {
@@ -124,10 +138,10 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
             super(
                     context,
                     cursor,
-                    R.layout.list_item_contents_drilldown,
+                    R.layout.list_item_content_detail_list,
                     new String[]{"name"},
                     new int[]{R.id.lblContentDetailName},
-                    R.layout.list_item_contentdetails_drilldown_json,
+                    R.layout.list_item_content_item_list,
                     new String[]{"name", "icon"},
                     new int[]{R.id.lblContentDetailName, R.id.icon});
         }
@@ -135,8 +149,7 @@ public class ContentsDrilldownFragment extends RootFragment implements Expandabl
         @Override
         protected Cursor getChildrenCursor(Cursor groupCursor) {
             int seq = groupCursor.getInt(0);
-            Cursor childCursor = db.getContentDetailsDrilldown(contentId, seq);
-            return childCursor;
+            return db.getContentDetailsDrilldown(contentId, seq);
         }
 
         @Override

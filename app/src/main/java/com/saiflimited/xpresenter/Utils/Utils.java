@@ -6,12 +6,10 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Base64;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,34 +39,32 @@ public class Utils {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
-    public static Uri getUri(String base64Image, String filename) {
+    public static Uri getUri(String base64Image, String filename, Context context) {
 
         String newEncodedIcon = base64Image.substring(base64Image.indexOf(",") + 1);
 
         byte[] decodedString = Base64.decode(newEncodedIcon, Base64.DEFAULT);
         Bitmap icon = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        File url = writeImage(icon, filename);
-        Uri uri = Uri.fromFile(url);
-        return uri;
+        File url = writeImage(icon, filename, context);
+        return Uri.fromFile(url);
     }
 
-    private static File writeImage(Bitmap icon, String filename) {
+    private static File writeImage(Bitmap icon, String filename, Context context) {
 
-        File directory = Environment.getExternalStorageDirectory();
-        if (!directory.exists()) {
-            directory.mkdirs();
+        File directory = context.getExternalCacheDir();
+        if (directory != null) {
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
         }
 
-        OutputStream outputStream = null;
+        OutputStream outputStream;
         File iconFile = new File(directory, filename + ".png");
         try {
             outputStream = new FileOutputStream(iconFile);
-            Bitmap bitmap = icon;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            icon.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
