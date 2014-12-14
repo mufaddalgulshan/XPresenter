@@ -78,7 +78,7 @@ public class ContentDetailFragment extends RootFragment implements ExpandableLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_content_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_content_detail_list, container, false);
 
         // Set the adapter
         mListView = (ExpandableListView) view.findViewById(android.R.id.list);

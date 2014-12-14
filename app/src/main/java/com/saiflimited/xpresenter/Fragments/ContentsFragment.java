@@ -89,7 +89,7 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
 
         if (format.toUpperCase().equals("JSON") || tabName.toUpperCase().equals("MENSAGENS")) {
 
-            view = inflater.inflate(R.layout.fragment_content, container, false);
+            view = inflater.inflate(R.layout.fragment_content_list, container, false);
 
             // Set the adapter
             mListView = (AbsListView) view.findViewById(R.id.listView);

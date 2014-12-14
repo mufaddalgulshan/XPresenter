@@ -180,13 +180,13 @@ public class ValidateFragment extends Fragment {
         SmsManager smsManager = SmsManager.getDefault();
 
         /** Sending the Sms message to the intended party */
-        smsManager.sendTextMessage(number, null, message, null, null);
+//        smsManager.sendTextMessage(number, null, message, null, null);
 
-//        if (mToast == null) {
-//            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
-//        }
-//        mToast.setText(PIN);
-//        mToast.show();
+        if (mToast == null) {
+            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+        }
+        mToast.setText(PIN);
+        mToast.show();
     }
 
     public interface ValidateCallback {
