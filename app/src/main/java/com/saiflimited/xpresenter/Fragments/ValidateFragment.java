@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.saiflimited.xpresenter.DB.DatabaseHandler;
 import com.saiflimited.xpresenter.R;
@@ -38,7 +37,7 @@ public class ValidateFragment extends Fragment {
     private boolean mFirstAccess;
     private String mPIN = "";
     private EditText txtPIN;
-    private Toast mToast;
+//    private Toast mToast;
 
     private ValidateCallback mValidateCallback;
 
@@ -180,13 +179,13 @@ public class ValidateFragment extends Fragment {
         SmsManager smsManager = SmsManager.getDefault();
 
         /** Sending the Sms message to the intended party */
-//        smsManager.sendTextMessage(number, null, message, null, null);
+        smsManager.sendTextMessage(number, null, message, null, null);
 
-        if (mToast == null) {
-            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
-        }
-        mToast.setText(PIN);
-        mToast.show();
+//        if (mToast == null) {
+//            mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+//        }
+//        mToast.setText(PIN);
+//        mToast.show();
     }
 
     public interface ValidateCallback {
