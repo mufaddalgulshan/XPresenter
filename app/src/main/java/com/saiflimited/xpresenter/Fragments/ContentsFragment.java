@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,7 @@ public class ContentsFragment extends RootFragment implements AbsListView.OnItem
         if (format.toUpperCase().equals("JSON")) {
 
             Cursor contentList = db.getContentList(tabName);
-            Log.i("[Icon URI]", contentList.getString(4));
+//            Log.i("[Icon URI]", contentList.getString(4));
             String fromColumns[] = {"brand", "activity", "goal", "icon"};
             int toViews[] = {R.id.lblBrand, R.id.lblActivity, R.id.lblDesc, R.id.icon};
             mAdapter = new SimpleCursorAdapter(getActivity(),

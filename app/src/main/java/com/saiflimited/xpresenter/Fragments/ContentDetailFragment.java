@@ -101,7 +101,7 @@ public class ContentDetailFragment extends RootFragment implements ExpandableLis
         lblBrand.setText(content.getBrand());
         lblActivity.setText(content.getActivity());
         lblGoal.setText(content.getGoal());
-        lblDateStart.setText(content.getDateStart());
+        lblDateStart.setText("Data de inicio " + content.getDateStart());
         lblReachDesc.setText(content.getReachDescription());
         lblRule.setText(content.getRule());
         imgHeader.setImageURI(Uri.parse(content.getImage()));

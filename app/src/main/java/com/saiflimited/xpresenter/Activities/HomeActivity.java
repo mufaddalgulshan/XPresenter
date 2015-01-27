@@ -88,13 +88,14 @@ public class HomeActivity extends ActionBarActivity {
     private void setupToolbar() {
 
         //Get app name from db
-        String appname = db.getAppName();
+//        String appname = db.getAppName();
 
         Drawable toolbarBackground = new BitmapDrawable(background);
 
         //Set toolbar properties
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(appname);
+//        toolbar.setTitle(appname);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         toolbar.setBackground(toolbarBackground);
 
